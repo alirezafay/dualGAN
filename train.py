@@ -85,7 +85,7 @@ def train_Discriminators(model,l_max,loss_G,loss_dv,loss_di,vis,ir,max_epoch,lr)
 	return model,L_G,loss_i,loss_v
 
 def main():
-	l_max=1.8
+        l_max=1.8
 	l_min=1.2
 	max_epoch=20
 	batch_size=args.bs
@@ -100,7 +100,7 @@ def main():
 	Loss_Di=L_Di()
 
 	for epoch in range(0,args.epoch):
-		print('epoch:',epoch)
+	        print(f'epoch:{epoch}')
                 loss_generator = 0
                 loss_discriminator_i = 0
                 loss_discriminator_v = 0
