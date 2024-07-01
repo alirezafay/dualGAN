@@ -37,10 +37,10 @@ def load_train_data(path,batch,batch_size,gpu):
 	for i in range(batch*batch_size,min(len(imgname),(batch+1)*batch_size)):
 		if i==batch*batch_size:
 			train_data1=image_loader(imgname[i][0],gpu,256)
-			train_data2=image_loader(imgname[i][1],gpu,64)
+			train_data2=image_loader(imgname[i][1],gpu,256)
 		else:
 			data1=image_loader(imgname[i][0],gpu,256)
-			data2=image_loader(imgname[i][1],gpu,64)
+			data2=image_loader(imgname[i][1],gpu,256)
 			train_data1=torch.cat((train_data1,data1),0)
 			train_data2=torch.cat((train_data2,data2),0)
 	return train_data1,train_data2,len(imgname)
