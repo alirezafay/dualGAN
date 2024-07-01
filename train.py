@@ -91,7 +91,7 @@ def main():
 	max_epoch=20
 	batch_size=args.bs
 
-	vis,ir,img=load_train_data('/kaggle/working/images',0,batch_size,0)
+	vis,ir,img=load_train_data('/content/images',0,batch_size,0)
 
 	model=DDcGAN(if_train=True).cuda()
 
