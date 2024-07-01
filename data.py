@@ -32,7 +32,7 @@ def load_train_data(path,batch,batch_size,gpu):
 	imgname=[]
 	for i in dirname:
 		img=os.listdir(path+i)
-		img=[path+i+'/'+img[0],path+i+'/'+img[1]]
+		img=[path+'/'+i+'/'+img[0],path+'/'+i+'/'+img[1]]
 		imgname.append(img)
 	for i in range(batch*batch_size,min(len(imgname),(batch+1)*batch_size)):
 		if i==batch*batch_size:
@@ -46,5 +46,5 @@ def load_train_data(path,batch,batch_size,gpu):
 	return train_data1,train_data2,len(imgname)
 
 if __name__=='__main__':
-	img1,img2,img=load_train_data('../../dataset/TNO/',0,2,0)
+	img1,img2,img=load_train_data('/kaggle/working/images',0,2,0)
 	print(img1.shape,img2.shape)
