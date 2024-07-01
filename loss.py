@@ -7,12 +7,9 @@ class L_con(nn.Module):
 		super(L_con, self).__init__()
 		self.eta=eta
 
-		self.down=nn.Sequential(
-			nn.AvgPool2d(3,2,1),
-			nn.AvgPool2d(3,2,1))
 
 	def forward(self,G,v,i):
-		I=torch.pow(torch.pow((self.down(G)-i),2).sum(),0.5)
+		I=torch.pow(torch.pow((G-i),2).sum(),0.5)
 		r=G-v
 		[W,H]=r.shape[2:4]
 		tv1=torch.pow((r[:,:,1:,:]-r[:,:,:H-1,:]),2).mean()
