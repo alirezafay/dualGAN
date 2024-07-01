@@ -31,7 +31,7 @@ def load_train_data(path,batch,batch_size,gpu):
 	dirname=os.listdir(path)
 	imgname=[]
 	for i in dirname:
-		img=os.listdir(path+'/'i)
+		img=os.listdir(path+'/'+i)
 		img=[path+'/'+i+'/'+img[0],path+'/'+i+'/'+img[1]]
 		imgname.append(img)
 	for i in range(batch*batch_size,min(len(imgname),(batch+1)*batch_size)):
