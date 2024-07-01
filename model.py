@@ -151,16 +151,13 @@ class DDcGAN(nn.Module):
 		self.G=Generator()
 		self.Dv=Discriminator_v()
 		self.Di=Discriminator_i()
-		self.down=nn.Sequential(
-			nn.AvgPool2d(3,2,1),
-			nn.AvgPool2d(3,2,1))
+
 
 	def forward(self,vis,ir):
 		fusion_v=self.G(vis,ir)
 		# image_save(fusion_v[0:1,:,:,:],'./test/'+str(len(os.listdir('./test')))+'.jpg')
 		# image_save(fusion_v[1:2,:,:,:],'./test/'+str(len(os.listdir('./test')))+'.jpg')
 		if self.if_train:
-			fusion_i=self.down(fusion_v)
 			score_v=self.Dv(vis)
 			score_i=self.Di(ir)
 			score_Gv=self.Dv(fusion_v)
