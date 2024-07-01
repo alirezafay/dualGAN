@@ -61,8 +61,7 @@ class Generator(nn.Module):
 			# nn.ReLU())
 
 	def forward(self,vis,ir):
-		vis=self.Vis_DeCon(vis)
-		ir=self.IR_DeCon(ir)
+
 		x=torch.cat((vis,ir),1)
 
 		x1=self.conv1(x)
