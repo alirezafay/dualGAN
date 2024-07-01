@@ -85,21 +85,16 @@ def train_Discriminators(model,l_max,loss_G,loss_dv,loss_di,vis,ir,max_epoch,lr)
 	return model,L_G,loss_i,loss_v
 
 def main():
-	
         l_max=1.8
-	l_min=1.2
+        l_min=1.2
 	max_epoch=20
 	batch_size=args.bs
-
 	vis,ir,img=load_train_data('/content/images',0,batch_size,0)
-
 	model=DDcGAN(if_train=True).cuda()
-
 	Loss_G=L_G()
 	Loss_adv_G=L_adv_G()
 	Loss_Dv=L_Dv()
 	Loss_Di=L_Di()
-
 	for epoch in range(0,args.epoch):
 	        print(f'epoch:{epoch}')
                 loss_generator = 0
