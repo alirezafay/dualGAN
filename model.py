@@ -155,6 +155,7 @@ class DDcGAN(nn.Module):
 
 	def forward(self,vis,ir):
 		fusion_v=self.G(vis,ir)
+		fusion_i=self.G(vis,ir)
 		# image_save(fusion_v[0:1,:,:,:],'./test/'+str(len(os.listdir('./test')))+'.jpg')
 		# image_save(fusion_v[1:2,:,:,:],'./test/'+str(len(os.listdir('./test')))+'.jpg')
 		if self.if_train:
