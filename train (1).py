@@ -90,7 +90,7 @@ def main():
 	max_epoch=20
 	batch_size=args.bs
 
-	vis,ir,img=load_train_data('../../dataset/TNO/',0,batch_size,0)
+	vis,ir,img=load_train_data('/kaggle/working/images',0,batch_size,0)
 
 	model=DDcGAN(if_train=True).cuda()
 
@@ -105,7 +105,7 @@ def main():
 		model,loss_G=train_Discriminators(model,l_max,Loss_G,Loss_Dv,Loss_Di,vis,ir,max_epoch,args.lr)
 		L_G_max=0.8*loss_G
 		model=train_Generator(model,L_G_max,l_min,Loss_G,Loss_adv_G,Loss_Dv,Loss_Di,vis,ir,max_epoch,args.lr)
-		torch.save(model,'./model/model'+str(epoch)+'.pth')
+		torch.save(model,'/kaggle/working'+str(epoch)+'.pth')
 
 if __name__=='__main__':
 	main()
