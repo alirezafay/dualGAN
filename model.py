@@ -8,10 +8,7 @@ class Generator(nn.Module):
 	def __init__(self):
 		super(Generator, self).__init__()
 		
-		self.Vis_DeCon=nn.Sequential(
-			nn.ConvTranspose2d(1,1,1,1))
-		self.IR_DeCon=nn.Sequential(
-			nn.ConvTranspose2d(1,1,4,4))
+
 
 		self.conv1=nn.Sequential(
 			nn.Conv2d(2,16,3,1,1),
@@ -134,7 +131,7 @@ class Discriminator_i(nn.Module):
 			nn.ReLU())
 
 		self.fc=nn.Sequential(
-			nn.Linear(4096,1),
+			nn.Linear(65536,1),
 			nn.Sigmoid())
 
 	def forward(self,i):
@@ -175,7 +172,7 @@ class DDcGAN(nn.Module):
 
 if __name__=='__main__':
 	vis=torch.rand((1,1,256,256))
-	ir=torch.rand((1,1,64,64))
+	ir=torch.rand((1,1,256,256))
 	model=Discriminator_i()
 	output=model(ir)
 	# model=Generator()
