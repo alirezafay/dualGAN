@@ -44,7 +44,7 @@ def train_Generator(model,l_Gmax,l_min,loss_G,loss_adv,loss_dv,loss_di,vis,ir,ma
 		if loss_g<=l_Gmax:
 			break
 
-	return model
+	return model,loss_g
 
 def train_Discriminators(model,l_max,loss_G,loss_dv,loss_di,vis,ir,max_epoch,lr):
 	for i in model.G.parameters():
@@ -82,7 +82,7 @@ def train_Discriminators(model,l_max,loss_G,loss_dv,loss_di,vis,ir,max_epoch,lr)
 		opt.step()
 	fusion_v,fusion_i,score_v,score_i,score_Gv,score_Gi=model(vis,ir)
 	L_G=loss_G(vis,ir,fusion_v,score_Gv,score_Gi)
-	return model,L_G
+	return model,L_G,loss_i,loss_v
 
 def main():
 	l_max=1.8
@@ -101,10 +101,15 @@ def main():
 
 	for epoch in range(0,args.epoch):
 		print('epoch:',epoch)
-
-		model,loss_G=train_Discriminators(model,l_max,Loss_G,Loss_Dv,Loss_Di,vis,ir,max_epoch,args.lr)
+                loss_generator = 0
+                loss_discriminator_i = 0
+                loss_discriminator_v = 0
+		model,loss_G,loss_i,loss_v=train_Discriminators(model,l_max,Loss_G,Loss_Dv,Loss_Di,vis,ir,max_epoch,args.lr)
+		loss_discriminator_i = loss_i.item()
+		loss_discriminator_v = loss_v.item()
 		L_G_max=0.8*loss_G
-		model=train_Generator(model,L_G_max,l_min,Loss_G,Loss_adv_G,Loss_Dv,Loss_Di,vis,ir,max_epoch,args.lr)
+		model,loss_g=train_Generator(model,L_G_max,l_min,Loss_G,Loss_adv_G,Loss_Dv,Loss_Di,vis,ir,max_epoch,args.lr)
+		loss_generator += loss_g.item()
 		torch.save(model,'/kaggle/working'+str(epoch)+'.pth')
 
 if __name__=='__main__':
