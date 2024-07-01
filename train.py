@@ -85,6 +85,7 @@ def train_Discriminators(model,l_max,loss_G,loss_dv,loss_di,vis,ir,max_epoch,lr)
 	return model,L_G,loss_i,loss_v
 
 def main():
+	
         l_max=1.8
 	l_min=1.2
 	max_epoch=20
