@@ -151,7 +151,7 @@ def main():
                 print(f'Loss discriminator infrared: {loss_discriminator_i}')
                 print(f'Loss discriminator visible: {loss_discriminator_v}')
                 print(f'Loss Generator: {loss_generator}')
-                fusion_res,_,_,_,_,_,_=model(vis,ir)
+                fusion_res,_,_,_,_,_=model(vis,ir)
                 image_tensor = fusion_res.detach() 
                 image = image_tensor[0, 0, :, :].cpu().numpy() 
                 plt.imshow(image,cmap='gray')
