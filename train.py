@@ -82,6 +82,9 @@ def train_Discriminators(model,l_max,loss_G,loss_dv,loss_di,vis,ir,max_epoch,lr)
 	fusion_v,fusion_i,score_v,score_i,score_Gv,score_Gi=model(vis,ir)
 	L_G=loss_G(vis,ir,fusion_v,score_Gv,score_Gi)
 	return model,L_G,loss_i,loss_v
+import torch
+import matplotlib.pyplot as plt
+import cv2
 
 from torch.utils.data import DataLoader, Dataset
 class GetDataset(Dataset):
@@ -148,6 +151,25 @@ def main():
                 print(f'Loss discriminator infrared: {loss_discriminator_i}')
                 print(f'Loss discriminator visible: {loss_discriminator_v}')
                 print(f'Loss Generator: {loss_generator}')
-
+                fusion_res,_,_,_,_,_,_=model(vis,ir)
+                image_tensor = fusion_res.detach() 
+                image = image_tensor[0, 0, :, :].cpu().numpy() 
+                plt.imshow(image,cmap='gray')
+                image = image_tensor[1, 0, :, :].cpu().numpy() 
+                plt.imshow(image,cmap='gray')
+                image = image_tensor[2, 0, :, :].cpu().numpy() 
+                plt.imshow(image,cmap='gray')
+                image = image_tensor[4, 0, :, :].cpu().numpy() 
+                plt.imshow(image,cmap='gray')
+                image = image_tensor[6, 0, :, :].cpu().numpy() 
+                plt.imshow(image,cmap='gray')
+                image = image_tensor[8, 0, :, :].cpu().numpy() 
+                plt.imshow(image,cmap='gray')
+                image = image_tensor[10, 0, :, :].cpu().numpy() 
+                plt.imshow(image,cmap='gray')
+                image = image_tensor[12, 0, :, :].cpu().numpy() 
+                plt.imshow(image,cmap='gray')
+                image = image_tensor[14, 0, :, :].cpu().numpy() 
+                plt.imshow(image,cmap='gray')
 if __name__=='__main__':
 	main()
