@@ -140,9 +140,9 @@ def main():
                         loss_discriminator_i = loss_i.item()
                         loss_discriminator_v = loss_v.item()
                 torch.save(model,'/kaggle/working'+str(epoch)+'.pth')
-		print(f'Loss discriminator infrared: {loss_discriminator_i}')
-		print(f'Loss discriminator visible: {loss_discriminator_v}')
-		print(f'Loss Generator: {loss_generator}')
+                print(f'Loss discriminator infrared: {loss_discriminator_i}')
+                print(f'Loss discriminator visible: {loss_discriminator_v}')
+                print(f'Loss Generator: {loss_generator}')
 
 if __name__=='__main__':
 	main()
