@@ -134,8 +134,8 @@ def main():
                 loss_discriminator_i = 0
                 loss_discriminator_v = 0
                 for i , (ir, vis) in enumerate(loader):
-			ir = ir.to(device)
-			vis = vis.to(device)
+                        ir = ir.to(device)
+                        vis = vis.to(device)
                         model,loss_g=train_Generator(model,l_min,Loss_G,Loss_adv_G,Loss_Dv,Loss_Di,vis,ir,max_epoch,args.lr)
                         loss_generator += loss_g.item()
                         model,loss_G,loss_i,loss_v=train_Discriminators(model,l_max,Loss_G,Loss_Dv,Loss_Di,vis,ir,max_epoch,args.lr)
