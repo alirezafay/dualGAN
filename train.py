@@ -14,7 +14,7 @@ parser.add_argument('--bs',type=int,default=2,help='config file')
 parser.add_argument('--lr',type=float,default=0.002,help='config file')
 
 args=parser.parse_args()
-device = 'cuda' 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 def train_Generator(model,l_min,loss_G,loss_adv,loss_dv,loss_di,vis,ir,max_epoch,lr):
 	for i in model.G.parameters():
 		i.requires_grad=True
