@@ -45,6 +45,6 @@ def load_train_data(path,batch,batch_size,gpu):
 			train_data2=torch.cat((train_data2,data2),0)
 	return train_data1,train_data2,len(imgname)
 
-if __name__=='__main__':
-	img1,img2,img=load_train_data('/content/images',0,2,0)
-	print(img1.shape,img2.shape)
+#if __name__=='__main__':
+	#img1,img2,img=load_train_data('/kaggle/working/images',0,2,0)
+	#print(img1.shape,img2.shape)
