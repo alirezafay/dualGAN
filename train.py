@@ -15,7 +15,7 @@ parser.add_argument('--lr',type=float,default=0.002,help='config file')
 
 args=parser.parse_args()
 
-def train_Generator(model,l_Gmax,l_min,loss_G,loss_adv,loss_dv,loss_di,vis,ir,max_epoch,lr):
+def train_Generator(model,l_min,loss_G,loss_adv,loss_dv,loss_di,vis,ir,max_epoch,lr):
 	for i in model.G.parameters():
 		i.requires_grad=True
 	for i in model.Dv.parameters():
@@ -41,8 +41,7 @@ def train_Generator(model,l_Gmax,l_min,loss_G,loss_adv,loss_dv,loss_di,vis,ir,ma
 		opt.zero_grad()
 		loss_g.backward()
 		opt.step()
-		if loss_g<=l_Gmax:
-			break
+
 
 	return model,loss_g
 
@@ -84,12 +83,46 @@ def train_Discriminators(model,l_max,loss_G,loss_dv,loss_di,vis,ir,max_epoch,lr)
 	L_G=loss_G(vis,ir,fusion_v,score_Gv,score_Gi)
 	return model,L_G,loss_i,loss_v
 
+from torch.utils.data import DataLoader, Dataset
+class GetDataset(Dataset):
+    def __init__(self, MRIFolder, PETFolder,transform=None):
+        self.MRIFolder = MRIFolder
+        self.PETFolder = PETFolder
+        self.transform = transforms.Compose(
+        [transforms.Resize((256, 256)),
+         transforms.ToTensor(),
+         transforms.RandomHorizontalFlip(p=0.5),
+	 transforms.Normalize([0.5],[0.5])
+         ])
+        self.mri_files = sorted(os.listdir(MRIFolder))
+        self.pet_files = sorted(os.listdir(PETFolder))
+        
+    def __getitem__(self, index):
+        mri_path = os.path.join(self.MRIFolder, self.mri_files[index])
+        pet_path = os.path.join(self.PETFolder, self.pet_files[index])
+        mri_image = Image.open(mri_path).convert('L')
+        pet_image = Image.open(pet_path).convert('L')
+
+        if self.transform:
+            mri_image = self.transform(mri_image)
+            pet_image = self.transform(pet_image)
+            
+        #input = torch.cat((pet_image, mri_image), -3)
+        return pet_image, mri_image
+        
+    def __len__(self):
+        return len(self.mri_files)
+
+
 def main():
         l_max=1.8
         l_min=1.2
-        max_epoch=20
+        max_epoch=5
         batch_size=args.bs
-        vis,ir,img=load_train_data('/content/images',0,batch_size,0)
+	DATASET_mri = '/kaggle/working/images/MRI'
+        DATSAET_pet = '/kaggle/working/images/PET'
+        dataset_train = GetDataset(MRIFolder=DATASET_mri, PETFolder=DATSAET_pet, transform=None )
+        loader = DataLoader(dataset_train,shuffle=False,batch_size=batch_size)
         model=DDcGAN(if_train=True).cuda()
         Loss_G=L_G()
         Loss_adv_G=L_adv_G()
@@ -100,13 +133,16 @@ def main():
                 loss_generator = 0
                 loss_discriminator_i = 0
                 loss_discriminator_v = 0
-                model,loss_G,loss_i,loss_v=train_Discriminators(model,l_max,Loss_G,Loss_Dv,Loss_Di,vis,ir,max_epoch,args.lr)
-                loss_discriminator_i = loss_i.item()
-                loss_discriminator_v = loss_v.item()
-                L_G_max=0.8*loss_G
-                model,loss_g=train_Generator(model,L_G_max,l_min,Loss_G,Loss_adv_G,Loss_Dv,Loss_Di,vis,ir,max_epoch,args.lr)
-                loss_generator += loss_g.item()
+		for i , (pet, image) in enumerate(loader):
+			model,loss_g=train_Generator(model,l_min,Loss_G,Loss_adv_G,Loss_Dv,Loss_Di,vis,ir,max_epoch,args.lr)
+                        loss_generator += loss_g.item()
+                        model,loss_G,loss_i,loss_v=train_Discriminators(model,l_max,Loss_G,Loss_Dv,Loss_Di,vis,ir,max_epoch,args.lr)
+                        loss_discriminator_i = loss_i.item()
+                        loss_discriminator_v = loss_v.item()
                 torch.save(model,'/kaggle/working'+str(epoch)+'.pth')
+		print(f'Loss discriminator infrared: {loss_discriminator_i}')
+		print(f'Loss discriminator visible: {loss_discriminator_v}')
+		print(f'Loss Generator: {loss_generator}')
 
 if __name__=='__main__':
 	main()
