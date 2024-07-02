@@ -16,13 +16,13 @@ parser.add_argument('--lr',type=float,default=0.002,help='config file')
 args=parser.parse_args()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 def train_Generator(model,l_min,loss_G,loss_adv,loss_dv,loss_di,vis,ir,max_epoch,lr):
-	for i in model.G.parameters():
+	for i in model.module.G.parameters():
 		i.requires_grad=True
-	for i in model.Dv.parameters():
+	for i in model.module.Dv.parameters():
 		i.requires_grad=False
-	for i in model.Di.parameters():
+	for i in model.module.Di.parameters():
 		i.requires_grad=False
-	opt=torch.optim.RMSprop(model.parameters(),lr)
+	opt=torch.optim.RMSprop(model.module.parameters(),lr)
 	for epoch in range(0,max_epoch+1):
 		fusion_v,fusion_i,score_v,score_i,score_Gv,score_Gi=model(vis,ir)
 		loss_v=loss_dv(score_v,score_Gv)
@@ -46,13 +46,13 @@ def train_Generator(model,l_min,loss_G,loss_adv,loss_dv,loss_di,vis,ir,max_epoch
 	return model,loss_g
 
 def train_Discriminators(model,l_max,loss_G,loss_dv,loss_di,vis,ir,max_epoch,lr):
-	for i in model.G.parameters():
+	for i in model.module.G.parameters():
 		i.requires_grad=False
-	for i in model.Dv.parameters():
+	for i in model.module.Dv.parameters():
 		i.requires_grad=True
-	for i in model.Di.parameters():
+	for i in model.module.Di.parameters():
 		i.requires_grad=False
-	opt=torch.optim.SGD(model.parameters(),lr)
+	opt=torch.optim.SGD(model.module.parameters(),lr)
 	for epoch in range(0,max_epoch+1):
 		_,_,score_v,_,score_Gv,_=model(vis,ir)
 		loss_v=loss_dv(score_v,score_Gv)
@@ -63,13 +63,13 @@ def train_Discriminators(model,l_max,loss_G,loss_dv,loss_di,vis,ir,max_epoch,lr)
 		loss_v.backward()
 		opt.step()
 
-	for i in model.G.parameters():
+	for i in model.module.G.parameters():
 		i.requires_grad=False
-	for i in model.Dv.parameters():
+	for i in model.module.Dv.parameters():
 		i.requires_grad=False
-	for i in model.Di.parameters():
+	for i in model.module.Di.parameters():
 		i.requires_grad=True
-	opt=torch.optim.SGD(model.parameters(),lr)
+	opt=torch.optim.SGD(model.module.parameters(),lr)
 	for epoch in range(0,max_epoch+1):
 		_,_,_,score_i,_,score_Gi=model(vis,ir)
 		loss_i=loss_di(score_i,score_Gi)
@@ -114,6 +114,7 @@ class GetDataset(Dataset):
         return len(self.mri_files)
 
 
+
 def main():
         l_max=1.8
         l_min=1.2
@@ -123,7 +124,9 @@ def main():
         DATSAET_pet = '/kaggle/working/images/PET'
         dataset_train = GetDataset(MRIFolder=DATASET_mri, PETFolder=DATSAET_pet, transform=None )
         loader = DataLoader(dataset_train,shuffle=False,batch_size=batch_size)
-        model=DDcGAN(if_train=True).cuda()
+        model = DDcGAN(if_train=True)
+        model = nn.DataParallel(model, device_ids=[0, 1])
+        model = model.to(device)
         Loss_G=L_G()
         Loss_adv_G=L_adv_G()
         Loss_Dv=L_Dv()
