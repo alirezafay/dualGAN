@@ -119,7 +119,7 @@ def main():
         l_min=1.2
         max_epoch=5
         batch_size=args.bs
-	DATASET_mri = '/kaggle/working/images/MRI'
+        DATASET_mri = '/kaggle/working/images/MRI'
         DATSAET_pet = '/kaggle/working/images/PET'
         dataset_train = GetDataset(MRIFolder=DATASET_mri, PETFolder=DATSAET_pet, transform=None )
         loader = DataLoader(dataset_train,shuffle=False,batch_size=batch_size)
